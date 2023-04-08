@@ -1,5 +1,6 @@
 import re
 # Conflicting line
+# Another line
 import openpyxl
 
 wrkbk = openpyxl.load_workbook("input.xlsx")
