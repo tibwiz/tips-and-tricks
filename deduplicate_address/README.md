@@ -1,0 +1,3 @@
+- Run python3 dedupe.py
+- The output file will be in the same directory as the input file, with the name `output.csv'
+- Check the console for any entries without City, State, or Zip
