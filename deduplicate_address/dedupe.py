@@ -10,28 +10,36 @@ class Dedupe:
         data = []
         with open(self.input_file, 'r', newline='') as csvfile:
             reader = csv.DictReader(csvfile)
+
+            header = next(reader)
+            fieldnames = []
+            # Print the column headings
+            print("Column Headings:")
+            for column in header:
+                fieldnames.append(column)
+
             for row in reader:
                 m_street = row['Primary Contact: Mailing Street']
-                if m_street is None or m_street == '':
-                    continue
-                m_city = row['Primary Contact: Mailing City']
-                if m_city is None or m_city == '':
-                    print(f'City is empty for {m_street}')
-                    continue
-                m_state = row['Primary Contact: Mailing State/Province']
-                m_zip = row['Primary Contact: Mailing Zip/Postal Code']
-                m_country = row['Primary Contact: Mailing Country']
-                # print(f'Street:{m_street}, City: {m_city}, State: {m_state}, Zip: {m_zip}, Country: {m_country}')
-                if m_city in m_street:
-                    m_street = m_street.split(m_city)[0]
-                data.append({
+                if m_street:
+                    m_city = row['Primary Contact: Mailing City']
+                    if m_city is None or m_city == '':
+                        print(f'City is empty for {m_street}')
+                    else:
+                        m_state = row['Primary Contact: Mailing State/Province']
+                        m_zip = row['Primary Contact: Mailing Zip/Postal Code']
+                        m_country = row['Primary Contact: Mailing Country']
+                        # print(f'Street:{m_street}, City: {m_city}, State: {m_state}, Zip: {m_zip}, Country: {m_country}')
+                        if m_city in m_street:
+                            m_street = m_street.split(m_city)[0]
+                        
+                data.append({**row, **{
                     'Street': m_street,
                     'City': m_city,
                     'State': m_state,
                     'Country': m_country,
-                    'Zip': m_zip})
+                    'Zip': m_zip}})
 
-        fieldnames = ['Street', 'City', 'State', 'Zip', 'Country']
+        fieldnames.extend( ['Street', 'City', 'State', 'Country', 'Zip', 'Primary Contact: Mailing Street'])
         with open(self.output_file, 'w', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
